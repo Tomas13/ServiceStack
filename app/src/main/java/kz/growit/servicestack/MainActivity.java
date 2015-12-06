@@ -69,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
         stop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "Загрузка остановлена", Toast.LENGTH_SHORT).show();
 
                 //finding a service's process and killing it
                 ActivityManager am = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
@@ -90,9 +89,11 @@ public class MainActivity extends AppCompatActivity {
                 if (!isRunning){
                     isRunning = false;
                     isPaused = false;
-                    start.setText("Pause");
+                    start.setText("Start");
+
 //                    startService(intent);
                 }else{
+                    Toast.makeText(MainActivity.this, "Загрузка остановлена", Toast.LENGTH_SHORT).show();
                     isRunning = false;
                     isPaused = false;
                     start.setText("Start");
