@@ -20,7 +20,9 @@ import java.net.URLConnection;
 
 /**
  * Created by jean on 12/5/2015.
- */public class DownloadService extends IntentService {
+ */
+
+public class DownloadService extends IntentService {
     public static final int UPDATE_PROGRESS = 8344;
     public DownloadService() {
         super("DownloadService");
@@ -28,6 +30,7 @@ import java.net.URLConnection;
     @Override
     protected void onHandleIntent(Intent intent) {
         String urlToDownload = intent.getStringExtra("url");
+        String fileName = intent.getStringExtra("fileName");
         ResultReceiver receiver = (ResultReceiver) intent.getParcelableExtra("receiver");
         try {
             URL url = new URL(urlToDownload);
@@ -36,7 +39,7 @@ import java.net.URLConnection;
             // this will be useful so that you can show a typical 0-100% progress bar
             int fileLength = connection.getContentLength();
             File output2 = new File(Environment.getExternalStorageDirectory(),
-                    "BackHurts.html");
+                    fileName);
             // download the file
             InputStream input = new BufferedInputStream(connection.getInputStream());
             OutputStream output = new FileOutputStream(output2.getPath());
