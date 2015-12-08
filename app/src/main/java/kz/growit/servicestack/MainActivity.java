@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
                     isRunning = true;
                     isPaused = false;
                     start.setText("Pause");
+
                     startService(intent);
                 }else{
                     isRunning = false;
@@ -70,18 +71,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                //finding a service's process and killing it
-                ActivityManager am = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
-                List<ActivityManager.RunningAppProcessInfo> runningAppProcesses = am.getRunningAppProcesses();
-                Iterator<ActivityManager.RunningAppProcessInfo> iter = runningAppProcesses.iterator();
-                while(iter.hasNext()){
-                    ActivityManager.RunningAppProcessInfo next = iter.next();
-                    String pricessName = getPackageName() + ":downloadService";
-                    if(next.processName.equals(pricessName)){
-                        Process.killProcess(next.pid);
-                        break;
-                    }
-                }
+
 
                 if(mProgressBar.getVisibility() == View.VISIBLE)
                     mProgressBar.setVisibility(View.INVISIBLE);
@@ -98,7 +88,6 @@ public class MainActivity extends AppCompatActivity {
                     isPaused = false;
                     start.setText("Start");
                 }
-                stopService(new Intent(MainActivity.this, DownloadService.class));
             }
         });
     }
@@ -116,8 +105,7 @@ public class MainActivity extends AppCompatActivity {
                 mProgressBar.setProgress(progress);
                 if (progress == 100) {
                     mProgressBar.setVisibility(View.INVISIBLE);
-                    stopService(new Intent(MainActivity.this, DownloadService.class));
-                    Toast.makeText(MainActivity.this, "Загрузка завершена.", Toast.LENGTH_LONG).show();
+//                    stopService(new Intent(MainActivity.this, DownloadService.class));
                 }
             }
         }

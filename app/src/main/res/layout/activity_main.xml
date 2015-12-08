@@ -10,43 +10,43 @@
     tools:context=".MainActivity">
 
     <ProgressBar
+        android:id="@+id/progressBar"
         style="@android:style/Widget.ProgressBar.Horizontal"
         android:layout_width="match_parent"
         android:layout_height="30dp"
-        android:layout_marginBottom="16dp"
         android:layout_alignParentTop="true"
-        android:id="@+id/progressBar"/>
+        android:layout_marginBottom="16dp" />
 
     <LinearLayout
-        android:layout_below="@id/progressBar"
         android:id="@+id/ETLL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/progressBar"
         android:orientation="vertical">
 
         <EditText
-            android:hint="Name of the file here"
             android:id="@+id/fileNameET"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:hint="Name of the file here"
             android:text="JetBrains.pdf" />
 
         <EditText
-            android:hint="http link"
             android:id="@+id/urlET"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
-            android:text="https://vk.com/doc77569995_134595437?hash=8c0c3516c344b77db3&amp;dl=9eb0dff09686861b5c" />
-
+            android:hint="http link"
+            android:text="https://vk.com/doc77569995_134595437?hash=8c0c3516c344b77db3&amp;dl=9eb0dff09686861b5c"/>
     </LinearLayout>
 
+    <!--android:text="https://vk.com/doc77569995_134595437?hash=8c0c3516c344b77db3&amp;dl=9eb0dff09686861b5c"-->
+    <!--/>-->
 
     <LinearLayout
         android:id="@+id/BtnLL"
-        android:layout_below="@id/ETLL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/ETLL"
         android:layout_marginTop="30dp"
         android:gravity="center"
         android:orientation="horizontal">
