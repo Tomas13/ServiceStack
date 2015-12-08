@@ -56,9 +56,6 @@ public class DownloadService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
 
-        Notification note=new Notification(R.drawable.logo,
-                "Can you hear the music?",
-                System.currentTimeMillis());
         Intent i=new Intent(this, MainActivity.class);
 
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|
@@ -73,7 +70,7 @@ public class DownloadService extends IntentService {
         builder.setTicker("this is ticker text");
         builder.setContentTitle("WhatsApp Notification");
         builder.setContentText("You have a new message");
-        builder.setSmallIcon(R.drawable.logo);
+        builder.setSmallIcon(R.drawable.tassta_logo);
         builder.setContentIntent(pi);
         builder.setOngoing(true);
         builder.setNumber(100);
@@ -115,6 +112,7 @@ public class DownloadService extends IntentService {
                 receiver.send(UPDATE_PROGRESS, resultData);
                 if((int) (total * 100 / fileLength) == 100){
                     HN.post(new DisplayToast("FINISH DOWNLOAD"));
+//                    stopForeground(true);
                 }
                 output.write(data, 0, count);
             }
@@ -129,5 +127,11 @@ public class DownloadService extends IntentService {
         Bundle resultData = new Bundle();
         resultData.putInt("progress", 100);
         receiver.send(UPDATE_PROGRESS, resultData);
+
+        Intent broadcastIntent = new Intent();
+        broadcastIntent.setAction(MainActivity.mBroadcastStringAction);
+        broadcastIntent.putExtra("Data", resultData.getInt("progress"));
+        sendBroadcast(broadcastIntent);
+
     }
 }

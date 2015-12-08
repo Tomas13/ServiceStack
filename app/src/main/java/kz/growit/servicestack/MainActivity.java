@@ -1,7 +1,10 @@
 package kz.growit.servicestack;
 
 import android.app.ActivityManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.*;
 import android.os.Process;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +19,22 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final String mBroadcastStringAction = "com.truiton.broadcast.string";
+
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+           
+            if (intent.getAction().equals(mBroadcastStringAction)) {
+                Toast.makeText(MainActivity.this, "" + intent.getExtras(), Toast.LENGTH_SHORT).show();
+
+//                Intent stopIntent = new Intent(MainActivity.this,
+//                        BroadcastService.class);
+//                stopService(stopIntent);
+            }
+        }
+    };
+
     ProgressBar mProgressBar;
     Button start, stop;
     EditText fileNameET, urlET;
@@ -27,6 +46,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        IntentFilter mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(mBroadcastStringAction);
+
+        registerReceiver(mReceiver, mIntentFilter);
 
         urlET = (EditText) findViewById(R.id.urlET);
         fileNameET = (EditText) findViewById(R.id.fileNameET);
@@ -71,10 +95,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                stopService(new Intent(MainActivity.this, DownloadService.class));
 
-
-                if(mProgressBar.getVisibility() == View.VISIBLE)
+                if(mProgressBar.getVisibility() == View.VISIBLE) {
                     mProgressBar.setVisibility(View.INVISIBLE);
+                }
 
                 if (!isRunning){
                     isRunning = false;
