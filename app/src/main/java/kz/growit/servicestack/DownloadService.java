@@ -29,24 +29,18 @@ import java.net.URLConnection;
 
 public class DownloadService extends IntentService {
     public static final int UPDATE_PROGRESS = 8344;
-    final static int myID = 1234;
-    Notification notification;
 
     public DownloadService() {
         super("DownloadService");
     }
 
 
-
     Handler HN = new Handler();
-
     private class DisplayToast implements Runnable {
         String TM = "";
-
         public DisplayToast(String toast){
             TM = toast;
         }
-
         public void run(){
             Toast.makeText(getApplicationContext(), TM, Toast.LENGTH_SHORT).show();
         }
@@ -67,9 +61,9 @@ public class DownloadService extends IntentService {
         Notification.Builder builder = new Notification.Builder(getApplicationContext());
 
         builder.setAutoCancel(false);
-        builder.setTicker("this is ticker text");
-        builder.setContentTitle("WhatsApp Notification");
-        builder.setContentText("You have a new message");
+        builder.setTicker("Download is in process...");
+        builder.setContentTitle("ServiceStack Notification");
+        builder.setContentText("App is downloading stuff for you");
         builder.setSmallIcon(R.drawable.tassta_logo);
         builder.setContentIntent(pi);
         builder.setOngoing(true);
@@ -83,7 +77,7 @@ public class DownloadService extends IntentService {
 //        note.setLatestEventInfo(this, "Fake Player", "Now Playing: \"Ummmm, Nothing\"", pi);
 //        note.flags|=Notification.FLAG_NO_CLEAR;
 
-        startForeground(1337, myNotication);
+        startForeground(2015, myNotication);
 
         String urlToDownload = intent.getStringExtra("url");
         String fileName = intent.getStringExtra("fileName");
@@ -109,10 +103,17 @@ public class DownloadService extends IntentService {
                 // publishing the progress....
                 Bundle resultData = new Bundle();
                 resultData.putInt("progress", (int) (total * 100 / fileLength));
+
+//                Intent broadcastIntent = new Intent();
+//                broadcastIntent.setAction(MainActivity.mBroadcastStringAction);
+//                broadcastIntent.putExtra("Data", resultData.getInt("progress"));
+//                sendBroadcast(broadcastIntent);
+
                 receiver.send(UPDATE_PROGRESS, resultData);
                 if((int) (total * 100 / fileLength) == 100){
-                    HN.post(new DisplayToast("FINISH DOWNLOAD"));
+                    HN.post(new DisplayToast("DOWNLOAD IS FINISHED"));
 //                    stopForeground(true);
+                    stopSelf();
                 }
                 output.write(data, 0, count);
             }
@@ -127,11 +128,6 @@ public class DownloadService extends IntentService {
         Bundle resultData = new Bundle();
         resultData.putInt("progress", 100);
         receiver.send(UPDATE_PROGRESS, resultData);
-
-        Intent broadcastIntent = new Intent();
-        broadcastIntent.setAction(MainActivity.mBroadcastStringAction);
-        broadcastIntent.putExtra("Data", resultData.getInt("progress"));
-        sendBroadcast(broadcastIntent);
 
     }
 }

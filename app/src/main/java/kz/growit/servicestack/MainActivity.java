@@ -17,30 +17,47 @@ import android.widget.Toast;
 import java.util.Iterator;
 import java.util.List;
 
+
 public class MainActivity extends AppCompatActivity {
 
-    public static final String mBroadcastStringAction = "com.truiton.broadcast.string";
-
-    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-           
-            if (intent.getAction().equals(mBroadcastStringAction)) {
-                Toast.makeText(MainActivity.this, "" + intent.getExtras(), Toast.LENGTH_SHORT).show();
-
-//                Intent stopIntent = new Intent(MainActivity.this,
-//                        BroadcastService.class);
-//                stopService(stopIntent);
-            }
-        }
-    };
-
+    public static final String mBroadcastStringAction = "kz.growit.servicestack";
+    int ProgressIntent;
     ProgressBar mProgressBar;
     Button start, stop;
     EditText fileNameET, urlET;
     String fileName, url;
+
     Boolean isRunning = false;
     Boolean isPaused = false;
+
+
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(mBroadcastStringAction)) {
+                ProgressIntent = (Integer) intent.getExtras().get("Data");
+//                mProgressBar.setProgress(ProgressIntent);
+            }
+        }
+    };
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+
+        outState.putInt("ProgressActivity", ProgressIntent);
+
+        if (isRunning) {
+            outState.putBoolean("isRunning", true);
+        }
+        super.onSaveInstanceState(outState);
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        unregisterReceiver(mReceiver);
+        super.onDestroy();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +68,6 @@ public class MainActivity extends AppCompatActivity {
         mIntentFilter.addAction(mBroadcastStringAction);
 
         registerReceiver(mReceiver, mIntentFilter);
-
         urlET = (EditText) findViewById(R.id.urlET);
         fileNameET = (EditText) findViewById(R.id.fileNameET);
         start = (Button) findViewById(R.id.startBtn);
@@ -62,10 +78,21 @@ public class MainActivity extends AppCompatActivity {
         mProgressBar.setIndeterminate(false);
         mProgressBar.setVisibility(View.INVISIBLE);
 
+        // Check whether we're recreating a previously destroyed instance
+        //But it doesn't seem to save data when user force quits
+        if (savedInstanceState != null) {
+            // Restore value of members from saved state
+            ProgressIntent = savedInstanceState.getInt("ProgressActivity");
+//            mProgressBar.setProgress(ProgressIntent);
+            isRunning = savedInstanceState.getBoolean("isRunning");
+        } else {
+//            mProgressBar.setProgress(ProgressIntent);
+        }
+
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // this is how you fire the downloader
+
                 mProgressBar.setVisibility(View.VISIBLE);
                 mProgressBar.setProgress(0);
 
@@ -77,13 +104,13 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("receiver", new DownloadReceiver(new Handler()));
 //                startService(intent);
 
-                if (!isRunning){
+                if (!isRunning) {
                     isRunning = true;
                     isPaused = false;
                     start.setText("Pause");
 
                     startService(intent);
-                }else{
+                } else {
                     isRunning = false;
                     isPaused = true;
                     start.setText("Start");
@@ -95,24 +122,39 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                //finding a service's process and killing it
+                ActivityManager am = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+                List<ActivityManager.RunningAppProcessInfo> runningAppProcesses = am.getRunningAppProcesses();
+                Iterator<ActivityManager.RunningAppProcessInfo> iter = runningAppProcesses.iterator();
+                while(iter.hasNext()){
+                    ActivityManager.RunningAppProcessInfo next = iter.next();
+                    String pricessName = getPackageName() + ":downloadService";
+                    if(next.processName.equals(pricessName)){
+                        Process.killProcess(next.pid);
+                        break;
+                    }
+                }
+
                 stopService(new Intent(MainActivity.this, DownloadService.class));
 
-                if(mProgressBar.getVisibility() == View.VISIBLE) {
+                if (mProgressBar.getVisibility() == View.VISIBLE) {
                     mProgressBar.setVisibility(View.INVISIBLE);
                 }
 
-                if (!isRunning){
+                if (!isRunning) {
                     isRunning = false;
                     isPaused = false;
                     start.setText("Start");
-
+//                    Toast.makeText(MainActivity.this, "Загрузка остановлена", Toast.LENGTH_SHORT).show();
 //                    startService(intent);
-                }else{
+                } else {
                     Toast.makeText(MainActivity.this, "Загрузка остановлена", Toast.LENGTH_SHORT).show();
                     isRunning = false;
                     isPaused = false;
                     start.setText("Start");
                 }
+
+
             }
         });
     }
@@ -130,7 +172,6 @@ public class MainActivity extends AppCompatActivity {
                 mProgressBar.setProgress(progress);
                 if (progress == 100) {
                     mProgressBar.setVisibility(View.INVISIBLE);
-//                    stopService(new Intent(MainActivity.this, DownloadService.class));
                 }
             }
         }
