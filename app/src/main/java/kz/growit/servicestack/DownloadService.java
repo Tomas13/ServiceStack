@@ -104,10 +104,10 @@ public class DownloadService extends IntentService {
                 Bundle resultData = new Bundle();
                 resultData.putInt("progress", (int) (total * 100 / fileLength));
 
-//                Intent broadcastIntent = new Intent();
-//                broadcastIntent.setAction(MainActivity.mBroadcastStringAction);
-//                broadcastIntent.putExtra("Data", resultData.getInt("progress"));
-//                sendBroadcast(broadcastIntent);
+                Intent broadcastIntent = new Intent();
+                broadcastIntent.setAction(MainActivity.mBroadcastStringAction);
+                broadcastIntent.putExtra("Data", resultData.getInt("progress"));
+                sendBroadcast(broadcastIntent);
 
                 receiver.send(UPDATE_PROGRESS, resultData);
                 if((int) (total * 100 / fileLength) == 100){

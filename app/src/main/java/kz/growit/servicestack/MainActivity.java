@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(mBroadcastStringAction)) {
                 ProgressIntent = (Integer) intent.getExtras().get("Data");
-//                mProgressBar.setProgress(ProgressIntent);
+                mProgressBar.setProgress(ProgressIntent);
             }
         }
     };
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         IntentFilter mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(mBroadcastStringAction);
 
-        registerReceiver(mReceiver, mIntentFilter);
+
         urlET = (EditText) findViewById(R.id.urlET);
         fileNameET = (EditText) findViewById(R.id.fileNameET);
         start = (Button) findViewById(R.id.startBtn);
@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
         mProgressBar.setMax(100);
         mProgressBar.setIndeterminate(false);
-        mProgressBar.setVisibility(View.INVISIBLE);
+        mProgressBar.setVisibility(View.VISIBLE);
 
         // Check whether we're recreating a previously destroyed instance
         //But it doesn't seem to save data when user force quits
@@ -88,6 +88,10 @@ public class MainActivity extends AppCompatActivity {
         } else {
 //            mProgressBar.setProgress(ProgressIntent);
         }
+
+
+
+        registerReceiver(mReceiver, mIntentFilter);
 
         start.setOnClickListener(new View.OnClickListener() {
             @Override
