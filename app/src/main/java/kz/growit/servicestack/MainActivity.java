@@ -175,6 +175,7 @@ public class MainActivity extends AppCompatActivity {
                 int progress = resultData.getInt("progress");
                 mProgressBar.setProgress(progress);
                 if (progress == 100) {
+                    Toast.makeText(MainActivity.this, "Download is finished", Toast.LENGTH_SHORT).show();
                     mProgressBar.setVisibility(View.INVISIBLE);
                 }
             }

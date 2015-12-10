@@ -14,7 +14,6 @@
         style="@android:style/Widget.ProgressBar.Horizontal"
         android:layout_width="match_parent"
         android:layout_height="30dp"
-        android:visibility="visible"
         android:layout_alignParentTop="true"
         android:layout_marginBottom="16dp" />
 
